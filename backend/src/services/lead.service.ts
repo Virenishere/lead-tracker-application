@@ -1,19 +1,230 @@
-import { createUserValidator } from "../validator/user.validator";
+import { LeadStatus } from "../generated/prisma/enums";
+import { prisma } from "../lib/prisma";
+import AppError from "../utils/AppError";
+import ErrorList, { ERROR_CODES, HTTP_STATUS } from "../utils/ErrorList";
 
-//retreives all leads //pagination search sorting filter
-function getLeads(){};
+/**
+ * Interface for GetLeadsInput query parameters
+ */
+interface GetLeadsInput {
+  userId: string;
+  search?: string;
+  status?: LeadStatus;
+  sortBy?: "name" | "email" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
+  page?: number;
+  limit?: number;
+}
 
-//retreives leads by id 
-function getLeadsById(){};
+/**
+ * Retrieves all leads belonging to a specific user with pagination, search, & sorting
+ */
+export const getLeads = async ({userId,search,status,sortBy = "createdAt",sortOrder = "desc",page = 1,
+  limit = 10,} : GetLeadsInput) =>{
+  const skip = (page - 1) * limit;
 
-//create a new lead 
-function createLeads(){};
+  const where = {
+    userId,
 
-//update a lead by id
-function updateLeadsById(){};
+    ...(search && {
+      OR: [
+        {
+          name: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+        {
+          phone: {
+            contains: search,
+          },
+        },
+      ],
+    }),
 
-//update status of lead
-function updateLeadsStatus(){}
+    ...(status && {
+      status,
+    }),
+  };
 
-//delete lead by id
-function deleteLeadsById(){}
+  const [leads, total] = await Promise.all([
+    prisma.lead.findMany({
+      where,
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+      skip,
+      take: limit,
+    }),
+
+    prisma.lead.count({
+      where,
+    }),
+  ]);
+
+  return {
+    leads,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+/**
+ * retreives leads by id
+ */
+export const getLeadsById = async (leadId: string, userId: string) => {
+  const lead = await prisma.lead.findFirst({
+    where: {
+      id: leadId,
+            userId
+        }
+    })
+
+  if (!lead) {
+    throw new AppError(
+      "Lead not found",
+      HTTP_STATUS.NOT_FOUND,
+      ERROR_CODES.NOT_FOUND
+    );
+  }
+
+  return lead;
+}  
+
+/**
+ * interface for createLeadInput 
+ */
+interface CreateLeadsInput{
+    name: string,
+    email: string,
+    phone: string,
+    userId: string
+}
+
+/**
+ * create a new lead for each new user
+ */
+export const createLead = async ({name,email,phone,userId,}: CreateLeadsInput) => {
+  return await prisma.lead.create({
+    data: {
+      name,
+      email,
+      phone,
+      userId,
+    },
+  });
+};
+
+
+/**
+ * interface for updateLeadsById puting optional conditional as it might or might not changed
+ */
+interface UpdateLeadInput{
+    name ?: string; 
+    email ?: string;
+    phone ?: string;
+}
+
+/**
+ * update a lead by id 
+ */
+export const updateLeadsById = async (leadId:string , userId: string ,data: UpdateLeadInput) =>{
+  const lead = await prisma.lead.findFirst({
+    where: {
+      id: leadId,
+      userId,
+    },
+  });
+
+  if (!lead) {
+    throw new AppError(
+      "Lead not found",
+      HTTP_STATUS.NOT_FOUND,
+      ERROR_CODES.NOT_FOUND
+    );
+  }
+
+  const updatedLead = await prisma.lead.update({
+    where: {
+      id: leadId,
+    },
+    data: {
+      ...(data.name && { name: data.name }),
+      ...(data.email && { email: data.email }),
+      ...(data.phone && { phone: data.phone }),
+    },
+  });
+
+  return updatedLead;
+};
+
+/**
+ * update status of lead
+ */
+export const updateLeadStatus = async (leadId: string, userId: string, status: LeadStatus) => {
+  const lead = await prisma.lead.findFirst({
+    where: {
+      id: leadId,
+      userId,
+    },
+  });
+
+  if (!lead) {
+    throw new AppError(
+      "Lead not found",
+      HTTP_STATUS.NOT_FOUND,
+      ERROR_CODES.NOT_FOUND
+    );
+  }
+
+  const updatedLead = await prisma.lead.update({
+    where: {
+      id: leadId,
+    },
+    data: {
+      status,
+    },
+  });
+
+  return updatedLead;
+};
+
+/**
+ * delete lead by id
+ */
+export const deleteLeadsById = async (leadId: string, userId: string) =>{
+  const lead = await prisma.lead.findFirst({
+    where: {
+      id: leadId,
+      userId,
+    },
+  });
+
+  if (!lead) {
+    throw new AppError(
+      "Lead not found",
+      HTTP_STATUS.NOT_FOUND,
+      ERROR_CODES.NOT_FOUND
+    );
+  }
+
+  await prisma.lead.delete({
+    where: {
+      id: leadId,
+    },
+  });
+
+  return {
+    message: "Lead deleted successfully",
+  };
+};

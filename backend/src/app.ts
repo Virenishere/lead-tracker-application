@@ -5,6 +5,7 @@ import pinoHttp from "pino-http";
 
 import healthRoutes from "./routes/health.routes";
 import userRoutes from "./routes/user.routes";
+import leadRoutes from "./routes/lead.routes";
 import logger from "./utils/logger";
 import { apiRateLimiter } from "./middlewares/rate-limit.middleware";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
@@ -33,6 +34,9 @@ app.use("/api/v1", healthRoutes);
 
 // Authentication & User management routes
 app.use("/api/v1/auth", userRoutes);
+
+// Lead management routes (protected)
+app.use("/api/v1/leads", leadRoutes);
 
 // 404 Route Not Found Handler
 app.use(notFoundHandler);

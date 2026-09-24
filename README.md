@@ -48,3 +48,13 @@ idead
 
 
 ![alt text](lead_tracker_block_architecture.png)
+
+
+```
+test account 
+{
+    "name" : "virender",
+    "email" : "test123@gmail.com",
+    "password" : "Test@123"
+}
+```
