@@ -911,7 +911,7 @@ Create `.env`:
 
 ```env
 DATABASE_URL=
-PORT=3000
+PORT=8000
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:5173
 ```

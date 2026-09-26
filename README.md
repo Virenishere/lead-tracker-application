@@ -1,9 +1,13 @@
 # lead-tracker-application
 
 frontend 
-1.created a react setup 
+1. created a react setup 
 2. research for best archetecture for production where i can handle lead optimizly from frontend 
-
+3. added react router 
+4. using magic ui for ui design 
+5. also making routes setup 
+6. implement dark and light theme with using next-themes
+7. 
 
 backend 
 1. created a backend setup 

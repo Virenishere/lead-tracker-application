@@ -24,21 +24,20 @@ export const authenticate = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const authHeader = req.headers.authorization;
+        let token: string | undefined =
+            req.signedCookies?.accessToken || req.cookies?.accessToken;
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            throw new AppError(
-                "Authentication required. Please provide a valid Bearer token in the Authorization header.",
-                HTTP_STATUS.UNAUTHORIZED,
-                ERROR_CODES.AUTH_REQUIRED
-            );
+        // Fallback to Bearer token header if cookie is absent
+        if (!token) {
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith("Bearer ")) {
+                token = authHeader.split(" ")[1];
+            }
         }
-
-        const token = authHeader.split(" ")[1];
 
         if (!token) {
             throw new AppError(
-                "Authentication token is missing.",
+                "Authentication required. Please log in.",
                 HTTP_STATUS.UNAUTHORIZED,
                 ERROR_CODES.AUTH_REQUIRED
             );

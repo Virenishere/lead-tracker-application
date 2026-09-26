@@ -23,33 +23,37 @@ export const getLeads = async ({userId,search,status,sortBy = "createdAt",sortOr
   limit = 10,} : GetLeadsInput) =>{
   const skip = (page - 1) * limit;
 
+  const validStatuses = Object.values(LeadStatus);
+  const effectiveStatus = (status && validStatuses.includes(status as LeadStatus)) ? (status as LeadStatus) : undefined;
+  const cleanedSearch = search && search.trim() !== "" ? search.trim() : undefined;
+
   const where = {
     userId,
 
-    ...(search && {
+    ...(cleanedSearch && {
       OR: [
         {
           name: {
-            contains: search,
+            contains: cleanedSearch,
             mode: "insensitive" as const,
           },
         },
         {
           email: {
-            contains: search,
+            contains: cleanedSearch,
             mode: "insensitive" as const,
           },
         },
         {
           phone: {
-            contains: search,
+            contains: cleanedSearch,
           },
         },
       ],
     }),
 
-    ...(status && {
-      status,
+    ...(effectiveStatus && {
+      status: effectiveStatus,
     }),
   };
 

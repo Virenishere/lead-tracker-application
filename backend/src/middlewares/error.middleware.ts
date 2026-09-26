@@ -32,7 +32,12 @@ export const errorHandler = (
             message: issue.message,
         }));
     }
-    // Handle Prisma Known Request Errors
+    // Handle Prisma Errors
+    else if (err?.name === "PrismaClientValidationError") {
+        statusCode = HTTP_STATUS.BAD_REQUEST;
+        errorCode = ERROR_CODES.VALIDATION_ERROR;
+        message = "Invalid database query parameters.";
+    }
     else if (err?.code && typeof err.code === "string" && err.code.startsWith("P")) {
         statusCode = HTTP_STATUS.BAD_REQUEST;
         errorCode = ERROR_CODES.DATABASE_ERROR;

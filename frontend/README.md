@@ -733,3 +733,12 @@ Potential future frontend improvements:
 * Dark mode
 * Virtualized tables for very large datasets
 * Offline support
+
+
+
+frontend ideas using magic ui 
+
+
+using pointer for mouse pointer looks goods
+AnimatedThemeToggler for dark and light mode looks cools
+want to use Interactive Hover Button over on hero section 

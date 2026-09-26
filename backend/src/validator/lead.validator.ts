@@ -51,8 +51,11 @@ export const updateLeadStatusValidator = z.object({
 });
 
 export const getLeadsQueryValidator = z.object({
-    search: z.string().trim().optional(),
-    status: z.nativeEnum(LeadStatus).optional(),
+    search: z.string().trim().optional().transform((val) => (val === "" ? undefined : val)),
+    status: z.preprocess(
+        (val) => (val === "" || val === "ALL" ? undefined : val),
+        z.nativeEnum(LeadStatus).optional()
+    ),
     sortBy: z.enum(["name", "email", "createdAt", "updatedAt"]).optional().default("createdAt"),
     sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
     page: z.coerce.number().int().positive().optional().default(1),

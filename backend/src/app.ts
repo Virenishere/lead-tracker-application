@@ -1,6 +1,7 @@
 import express from "express";
-import cors from "cors"
+import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 
 import healthRoutes from "./routes/health.routes";
@@ -12,17 +13,43 @@ import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 
 const app = express();
 
-app.use(cors()); // Adds headers: Access-Control-Allow-Origin: *
-app.use(helmet()); // Enable Helmet security headers early in the middleware stack
-app.use(express.json(
-    {limit: "1mb"}
-)); // express built-in middleware function with request size limit of 1mb 
+const allowedOrigins = [
+    process.env.CORS_ORIGIN,
+    "http://localhost:5173",
+].filter(Boolean) as string[];
 
+const COOKIE_SECRET = process.env.COOKIE_SECRET || process.env.JWT_REFRESH_SECRET || "lead_tracker_cookie_secret_key";
 
-// HTTP request logging
+// Configure CORS for credentials (HttpOnly cookies across origins)
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        credentials: true,
+    })
+);
+
+app.use(helmet());
+app.use(cookieParser(COOKIE_SECRET));
+app.use(express.json({ limit: "1mb" }));
+
+// HTTP request logging (redact sensitive authorization headers and cookies)
 app.use(
     pinoHttp({
         logger,
+        redact: {
+            paths: [
+                "req.headers.authorization",
+                "req.headers.cookie",
+                "res.headers['set-cookie']",
+            ],
+            censor: "[REDACTED]",
+        },
     })
 );
 

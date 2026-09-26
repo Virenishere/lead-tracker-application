@@ -10,8 +10,11 @@ import {
     UpdateProfileInput,
 } from "../validator/user.validator";
 
-const JWT_SECRET = process.env.JWT_SECRET || "lead_tracker_jwt_secret_key_change_in_prod";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
+const JWT_ACCESS_SECRET: string = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET || "default_access_secret_key_change_me_in_prod";
+const JWT_REFRESH_SECRET: string = process.env.JWT_REFRESH_SECRET || "default_refresh_secret_key_change_me_in_prod";
+
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || "15m";
+const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || "7d";
 
 export interface JwtPayload {
     userId: string;
@@ -54,9 +57,10 @@ export class AuthService {
             },
         });
 
-        const token = this.generateToken({ userId: user.id, email: user.email });
+        const accessToken = this.generateAccessToken({ userId: user.id, email: user.email });
+        const refreshToken = this.generateRefreshToken({ userId: user.id, email: user.email });
 
-        return { user, token };
+        return { user, accessToken, refreshToken };
     }
 
     /**
@@ -87,7 +91,8 @@ export class AuthService {
             );
         }
 
-        const token = this.generateToken({ userId: user.id, email: user.email });
+        const accessToken = this.generateAccessToken({ userId: user.id, email: user.email });
+        const refreshToken = this.generateRefreshToken({ userId: user.id, email: user.email });
 
         return {
             user: {
@@ -97,8 +102,34 @@ export class AuthService {
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             },
-            token,
+            accessToken,
+            refreshToken,
         };
+    }
+
+    /**
+     * Refresh access token using HttpOnly refresh token
+     */
+    static async refreshAccessToken(token: string) {
+        const decoded = this.verifyRefreshToken(token);
+
+        const user = await prisma.user.findUnique({
+            where: { id: decoded.userId },
+            select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },
+        });
+
+        if (!user) {
+            throw new AppError(
+                "User no longer exists",
+                HTTP_STATUS.UNAUTHORIZED,
+                ERROR_CODES.USER_NOT_FOUND
+            );
+        }
+
+        const newAccessToken = this.generateAccessToken({ userId: user.id, email: user.email });
+        const newRefreshToken = this.generateRefreshToken({ userId: user.id, email: user.email });
+
+        return { user, accessToken: newAccessToken, refreshToken: newRefreshToken };
     }
 
     /**
@@ -203,33 +234,73 @@ export class AuthService {
     }
 
     /**
-     * Helper to generate JWT token
+     * Generate short-lived Access Token (15m)
      */
-    static generateToken(payload: JwtPayload): string {
-        return jwt.sign(payload, JWT_SECRET, {
-            expiresIn: JWT_EXPIRES_IN as any,
+    static generateAccessToken(payload: JwtPayload): string {
+        return jwt.sign(payload, JWT_ACCESS_SECRET, {
+            expiresIn: ACCESS_TOKEN_EXPIRES_IN as any,
         });
     }
 
     /**
-     * Helper to verify JWT token
+     * Generate long-lived Refresh Token (7d)
      */
-    static verifyToken(token: string): JwtPayload {
+    static generateRefreshToken(payload: JwtPayload): string {
+        return jwt.sign(payload, JWT_REFRESH_SECRET, {
+            expiresIn: REFRESH_TOKEN_EXPIRES_IN as any,
+        });
+    }
+
+    /**
+     * Verify Access Token
+     */
+    static verifyAccessToken(token: string): JwtPayload {
         try {
-            return jwt.verify(token, JWT_SECRET) as JwtPayload;
+            return jwt.verify(token, JWT_ACCESS_SECRET) as unknown as JwtPayload;
         } catch (error: any) {
             if (error.name === "TokenExpiredError") {
                 throw new AppError(
-                    "Authentication token has expired. Please log in again.",
+                    "Access token has expired",
                     HTTP_STATUS.UNAUTHORIZED,
                     ERROR_CODES.TOKEN_EXPIRED
                 );
             }
             throw new AppError(
-                "Invalid authentication token",
+                "Invalid access token",
                 HTTP_STATUS.UNAUTHORIZED,
                 ERROR_CODES.INVALID_TOKEN
             );
         }
+    }
+
+    /**
+     * Verify Refresh Token
+     */
+    static verifyRefreshToken(token: string): JwtPayload {
+        try {
+            return jwt.verify(token, JWT_REFRESH_SECRET) as unknown as JwtPayload;
+        } catch (error: any) {
+            if (error.name === "TokenExpiredError") {
+                throw new AppError(
+                    "Refresh token has expired. Please log in again.",
+                    HTTP_STATUS.UNAUTHORIZED,
+                    ERROR_CODES.REFRESH_TOKEN_EXPIRED
+                );
+            }
+            throw new AppError(
+                "Invalid refresh token",
+                HTTP_STATUS.UNAUTHORIZED,
+                ERROR_CODES.INVALID_REFRESH_TOKEN
+            );
+        }
+    }
+
+    // Backward compatibility helper
+    static generateToken(payload: JwtPayload): string {
+        return this.generateAccessToken(payload);
+    }
+
+    static verifyToken(token: string): JwtPayload {
+        return this.verifyAccessToken(token);
     }
 }

@@ -2,14 +2,11 @@ import pino from "pino";
 
 const logger = pino({
     level: process.env.LOG_LEVEL || "info",
-
-
     transport: {
         targets: [
-            // this shows logs over on console too
             // {
             //     target: "pino-pretty",
-            //     level: "info",
+            //     level: process.env.LOG_LEVEL || "info",
             //     options: {
             //         colorize: true,
             //         translateTime: "SYS:standard",
@@ -24,10 +21,16 @@ const logger = pino({
                     mkdir: true,
                 },
             },
+            {
+                target: "pino/file",
+                level: "error",
+                options: {
+                    destination: "./logs/error.log",
+                    mkdir: true,
+                },
+            },
         ],
     },
-
-})
-
+});
 
 export default logger;
