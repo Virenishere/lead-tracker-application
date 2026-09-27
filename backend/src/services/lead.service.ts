@@ -1,5 +1,5 @@
-import { LeadStatus } from "../generated/prisma/enums.js";
-import { prisma } from "../lib/prisma.js";
+import { LeadStatus } from "../generated/prisma/enums";
+import { prisma } from "../lib/prisma";
 import AppError from "../utils/AppError.js";
 import ErrorList, { ERROR_CODES, HTTP_STATUS } from "../utils/ErrorList.js";
 

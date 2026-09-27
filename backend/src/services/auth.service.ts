@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { prisma } from "../lib/prisma.js";
+import { prisma } from "../lib/prisma";
 import AppError from "../utils/AppError.js";
 import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 import {

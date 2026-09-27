@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LeadStatus } from "../generated/prisma/enums.js"
+import { LeadStatus } from "../generated/prisma/enums"
 
 export const createLeadValidator = z.object({
     name: z
