@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service.js";
-import { prisma } from "../lib/prisma";
+import { prisma } from "../lib/prisma.js";
 import AppError from "../utils/AppError.js";
 import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 
