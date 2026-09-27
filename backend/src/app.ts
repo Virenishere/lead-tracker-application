@@ -4,12 +4,12 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 
-import healthRoutes from "./routes/health.routes";
-import userRoutes from "./routes/user.routes";
-import leadRoutes from "./routes/lead.routes";
-import logger from "./utils/logger";
-import { apiRateLimiter } from "./middlewares/rate-limit.middleware";
-import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
+import healthRoutes from "./routes/health.routes.js";
+import userRoutes from "./routes/user.routes.js";
+import leadRoutes from "./routes/lead.routes.js";
+import logger from "./utils/logger.js";
+import { apiRateLimiter } from "./middlewares/rate-limit.middleware.js";
+import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 

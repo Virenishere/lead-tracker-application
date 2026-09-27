@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthService } from "../services/auth.service";
-import { prisma } from "../lib/prisma";
-import AppError from "../utils/AppError";
-import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList";
+import { AuthService } from "../services/auth.service.js";
+import { prisma } from "../lib/prisma.js";
+import AppError from "../utils/AppError.js";
+import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 
 export interface AuthenticatedUser {
     id: string;

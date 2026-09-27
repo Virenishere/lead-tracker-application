@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as leadService from "../services/lead.service";
-import AppError from "../utils/AppError";
-import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList";
+import * as leadService from "../services/lead.service.js";
+import AppError from "../utils/AppError.js";
+import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 
 export const LeadController = {
     /**

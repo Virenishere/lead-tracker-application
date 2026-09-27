@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema, ZodError } from "zod";
-import AppError from "../utils/AppError";
-import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList";
+import AppError from "../utils/AppError.js";
+import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 
 interface ValidationTargets {
     body?: ZodSchema;

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
-import AppError from "../utils/AppError";
-import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList";
-import logger from "../utils/logger";
+import AppError from "../utils/AppError.js";
+import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
+import logger from "../utils/logger.js";
 
 export const errorHandler = (
     err: any,

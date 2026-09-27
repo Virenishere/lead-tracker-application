@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthService } from "../services/auth.service";
-import AppError from "../utils/AppError";
-import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList";
+import { AuthService } from "../services/auth.service.js";
+import AppError from "../utils/AppError.js";
+import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 

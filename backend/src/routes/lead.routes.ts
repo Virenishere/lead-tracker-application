@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { LeadController } from "../controllers/lead.controller";
-import { authenticate } from "../middlewares/auth.middleware";
-import { validate } from "../middlewares/validate.middleware";
+import { LeadController } from "../controllers/lead.controller.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
 import {
     createLeadValidator,
     updateLeadValidator,
     updateLeadStatusValidator,
     getLeadsQueryValidator,
-} from "../validator/lead.validator";
+} from "../validator/lead.validator.js";
 
 const router = Router();
 

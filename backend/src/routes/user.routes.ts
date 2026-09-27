@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { AuthController } from "../controllers/auth.controller";
-import { authenticate } from "../middlewares/auth.middleware";
-import { validate } from "../middlewares/validate.middleware";
-import { authRateLimiter } from "../middlewares/rate-limit.middleware";
+import { AuthController } from "../controllers/auth.controller.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import { authRateLimiter } from "../middlewares/rate-limit.middleware.js";
 import {
     registerUserSchema,
     loginUserSchema,
     changePasswordSchema,
     updateProfileSchema,
-} from "../validator/user.validator";
+} from "../validator/user.validator.js";
 
 const router = Router();
 

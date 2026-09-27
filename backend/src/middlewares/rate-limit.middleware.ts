@@ -1,5 +1,5 @@
 import rateLimit from "express-rate-limit";
-import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList";
+import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 
 export const apiRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
