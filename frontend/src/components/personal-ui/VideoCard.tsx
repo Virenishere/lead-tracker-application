@@ -12,6 +12,7 @@ import {
 import { InteractiveHoverButton } from "../ui/interactive-hover-button"
 import { Backlight } from "../ui/backlight"
 import { X } from "lucide-react"
+import demoLead from "../../assets/demolead.mp4";
 
 export function VideoCard() {
   return (
@@ -64,10 +65,9 @@ export function VideoCard() {
                 aspect-video
               "
             >
-              <video
-                // src="https://raw.githubusercontent.com/RedEye-Developers/Test-Assets/main/videos/money-haist-status.mp4"
-                src="https://raw.githubusercontent.com/RedEye-Developers/Test-Assets/main/videos/nvim-starfall.mp4"
-                className="absolute inset-0 h-full w-full object-cover"
+              <video 
+              src={demoLead}
+              className="absolute inset-0 h-full w-full object-cover"
                 autoPlay
                 muted
                 loop
