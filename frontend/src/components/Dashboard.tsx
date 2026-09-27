@@ -6,6 +6,16 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { AnimatedProgressBar } from "./personal-ui/AnimatedProgressBar";
 import { toast } from "./ui/toast";
 
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import { X } from "lucide-react";
+
 interface Lead {
   id: string;
   name: string;
@@ -16,9 +26,12 @@ interface Lead {
   updatedAt: string;
 }
 
+
 export const Dashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("leads-view");
+
+
 
   // Lead State
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -321,10 +334,11 @@ export const Dashboard = () => {
 
       {/* Dashboard Tabs Container */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-        <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full">
           <TabsTrigger value="leads-view">All Leads Info</TabsTrigger>
           <TabsTrigger value="leads-create">Create Lead</TabsTrigger>
           <TabsTrigger value="leads-manage">Manage Lead</TabsTrigger>
+          {/* <TabsTrigger value="csv-import">Bulk CSV Import</TabsTrigger> */}
           <TabsTrigger value="profile">My Profile</TabsTrigger>
         </TabsList>
 
@@ -638,92 +652,161 @@ export const Dashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* ================= TAB 4: PROFILE VIEW ================= */}
+
+        {/* ================= TAB 5: PROFILE VIEW (SOCIAL MEDIA STYLE) ================= */}
         <TabsContent value="profile">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Account Information */}
-            <Card className="border border-border bg-card">
-              <CardHeader className="p-6">
-                <CardTitle className="text-lg font-bold text-foreground">Account Information</CardTitle>
-                <CardDescription className="text-xs sm:text-sm text-muted-foreground">
-                  Update your personal name and email address.
-                </CardDescription>
-              </CardHeader>
+          <div className="max-w-3xl mx-auto space-y-6">
+            <Card className="border border-border bg-card overflow-hidden rounded-2xl shadow-sm">
+              {/* Banner Cover */}
+              <div className="h-32 bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-950 dark:from-neutral-950 dark:via-neutral-900 dark:to-black relative">
+                <div className="absolute top-4 right-4">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-background/80 backdrop-blur-md text-foreground border border-border">
+                    Verified Pro
+                  </span>
+                </div>
+              </div>
 
-              <form onSubmit={handleProfileUpdate} className="p-6 pt-0 space-y-4">
+              {/* Profile Header */}
+              <div className="px-6 pb-6 pt-0 relative">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12 mb-6">
+                  <div className="flex items-end gap-4">
+                    <div className="w-24 h-24 rounded-full border-4 border-card bg-foreground text-background flex items-center justify-center font-bold text-3xl shadow-xl shrink-0">
+                      {user?.name ? user.name.slice(0, 2).toUpperCase() : user?.email ? user.email.slice(0, 2).toUpperCase() : "US"}
+                    </div>
+                    <div className="pb-1">
+                      <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+                        {user?.name || "Lead Tracker User"}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-foreground mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={profileName}
-                    onChange={(e) => setProfileName(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
-                  />
+                  {/* Pop Up Settings Modal */}
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      render={
+                        <button
+                          type="button"
+                          className="px-4 py-2 rounded-lg border border-border bg-background text-foreground text-xs sm:text-sm font-semibold hover:bg-accent transition-colors shadow-sm self-start sm:self-auto"
+                        >
+                          Edit Profile Settings
+                        </button>
+                      }
+                    />
+
+                    <AlertDialogContent size="lg" className="p-6 border border-border bg-card max-w-lg rounded-2xl shadow-2xl">
+                      <AlertDialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-border">
+                        <AlertDialogTitle className="text-lg font-bold text-foreground">
+                          Account & Security Settings
+                        </AlertDialogTitle>
+                        <AlertDialogCancel className="p-1 rounded-full border border-border bg-transparent hover:bg-accent text-foreground">
+                          <X className="w-4 h-4" />
+                          <span className="sr-only">Close</span>
+                        </AlertDialogCancel>
+                      </AlertDialogHeader>
+
+                      <div className="space-y-6 pt-4 max-h-[70vh] overflow-y-auto px-1">
+                        {/* Section 1: Personal Profile */}
+                        <form onSubmit={handleProfileUpdate} className="space-y-4">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Personal Details</h4>
+                          <div>
+                            <label className="block text-xs font-medium text-foreground mb-1">Full Name</label>
+                            <input
+                              type="text"
+                              required
+                              value={profileName}
+                              onChange={(e) => setProfileName(e.target.value)}
+                              className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-medium text-foreground mb-1">Email Address</label>
+                            <input
+                              type="email"
+                              required
+                              value={profileEmail}
+                              onChange={(e) => setProfileEmail(e.target.value)}
+                              className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+                            />
+                          </div>
+
+                          <button
+                            type="submit"
+                            className="w-full py-2 rounded-lg bg-foreground text-background text-xs font-semibold hover:opacity-90"
+                          >
+                            Save Name & Email
+                          </button>
+                        </form>
+
+                        <div className="border-t border-border pt-4" />
+
+                        {/* Section 2: Change Password */}
+                        <form onSubmit={handleChangePassword} className="space-y-4">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Security & Password</h4>
+                          <div>
+                            <label className="block text-xs font-medium text-foreground mb-1">Current Password</label>
+                            <input
+                              type="password"
+                              required
+                              value={currentPassword}
+                              onChange={(e) => setCurrentPassword(e.target.value)}
+                              className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-medium text-foreground mb-1">New Password</label>
+                            <input
+                              type="password"
+                              required
+                              minLength={8}
+                              value={newPassword}
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+                            />
+                          </div>
+
+                          <button
+                            type="submit"
+                            className="w-full py-2 rounded-lg bg-foreground text-background text-xs font-semibold hover:opacity-90"
+                          >
+                            Update Password
+                          </button>
+                        </form>
+                      </div>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-foreground mb-1">Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    value={profileEmail}
-                    onChange={(e) => setProfileEmail(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
-                  />
+                {/* Account Activity Stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 border-y border-border/60">
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase">Total Pipeline</p>
+                    <p className="text-xl font-bold text-foreground">{totalLeadsCount}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase">Converted</p>
+                    <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{convertedCount}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase">Active Leads</p>
+                    <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{newCount + contactedCount + qualifiedCount}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase">Role</p>
+                    <p className="text-xl font-bold text-foreground">Administrator</p>
+                  </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-lg bg-foreground text-background text-xs sm:text-sm font-semibold hover:opacity-90"
-                >
-                  Save Profile
-                </button>
-              </form>
-            </Card>
-
-            {/* Change Password */}
-            <Card className="border border-border bg-card">
-              <CardHeader className="p-6">
-                <CardTitle className="text-lg font-bold text-foreground">Change Password</CardTitle>
-                <CardDescription className="text-xs sm:text-sm text-muted-foreground">
-                  Update your password to keep your account secure.
-                </CardDescription>
-              </CardHeader>
-
-              <form onSubmit={handleChangePassword} className="p-6 pt-0 space-y-4">
-
-                <div>
-                  <label className="block text-xs font-medium text-foreground mb-1">Current Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
-                  />
+                {/* System info */}
+                <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-muted-foreground gap-2">
+                  <span>Member since: 2026</span>
+                  <span>Lead Tracker System v1.0 • All systems operational</span>
                 </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-foreground mb-1">New Password</label>
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-lg border border-input bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-lg bg-foreground text-background text-xs sm:text-sm font-semibold hover:opacity-90"
-                >
-                  Update Password
-                </button>
-              </form>
+              </div>
             </Card>
           </div>
         </TabsContent>

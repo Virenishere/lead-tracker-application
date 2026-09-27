@@ -45,7 +45,7 @@ import { HomePipeline } from "./personal-ui/HomePipeline";
 import { VideoCard } from "./personal-ui/VideoCard";
 import { CardFeatures } from "./personal-ui/CardFeatures";
 import { HowItWorksCard } from "./personal-ui/HowItWorksCard";
-
+import { StartLoader } from "./personal-ui/startLoader";
 
 import { Link } from "react-router-dom";
 
@@ -55,6 +55,7 @@ export const HomePage = () => {
 
     return (
         <article className="flex flex-col gap-24 py-6 max-w-6xl mx-auto">
+            <StartLoader />
             {/* Hero Section */}
             <section className="flex flex-col items-center text-center pt-8 pb-4 space-y-8">
                 {/* Monochrome Badge */}

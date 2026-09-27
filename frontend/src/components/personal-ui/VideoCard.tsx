@@ -64,13 +64,14 @@ export function VideoCard() {
                 aspect-video
               "
             >
-              <iframe
-                src="https://www.youtube.com/embed/9CJLtzzUphU"
-                title="Gradient Loop Background"
-                className="absolute inset-0 h-full w-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
+              <video
+                // src="https://raw.githubusercontent.com/RedEye-Developers/Test-Assets/main/videos/money-haist-status.mp4"
+                src="https://raw.githubusercontent.com/RedEye-Developers/Test-Assets/main/videos/nvim-starfall.mp4"
+                className="absolute inset-0 h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
               />
             </div>
           </Backlight>
