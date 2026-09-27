@@ -7,7 +7,6 @@
     "build": "tsc",
     "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js",
-    "postinstall": "prisma skills sync || exit 0",
     "test": "jest"
   },
   "keywords": [],
