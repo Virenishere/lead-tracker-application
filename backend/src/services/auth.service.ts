@@ -1,14 +1,14 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { prisma } from "../lib/prisma";
-import AppError from "../utils/AppError";
-import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList";
+import { prisma } from "../lib/prisma.js";
+import AppError from "../utils/AppError.js";
+import { HTTP_STATUS, ERROR_CODES } from "../utils/ErrorList.js";
 import {
     RegisterUserInput,
     LoginUserInput,
     ChangePasswordInput,
     UpdateProfileInput,
-} from "../validator/user.validator";
+} from "../validator/user.validator.js";
 
 const JWT_ACCESS_SECRET: string = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET || "default_access_secret_key_change_me_in_prod";
 const JWT_REFRESH_SECRET: string = process.env.JWT_REFRESH_SECRET || "default_refresh_secret_key_change_me_in_prod";
