@@ -17,7 +17,7 @@ import demoLead from "../../assets/demolead.mp4";
 export function VideoCard() {
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={<InteractiveHoverButton>Show Dialog</InteractiveHoverButton>} />
+      <AlertDialogTrigger render={<InteractiveHoverButton>See How It's Work</InteractiveHoverButton>} />
 
       <AlertDialogContent
         size="xl"
@@ -26,7 +26,7 @@ export function VideoCard() {
         {/* Header */}
         <AlertDialogHeader className="flex flex-row items-center justify-between px-6 py-5 space-y-0">
           <AlertDialogTitle className="text-xl font-semibold">
-            Watch Our Demo
+            How it's Works...
           </AlertDialogTitle>
 
           <AlertDialogCancel
