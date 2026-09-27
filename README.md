@@ -511,8 +511,3 @@ Full-Stack / JavaScript Developer
 
 GitHub: `VirenderPrasad`
 
----
-
-## License
-
-This project was created as part of a technical assignment.
