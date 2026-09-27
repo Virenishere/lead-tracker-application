@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { AnimatedCircularProgressBar } from "../ui/animated-circular-progress-bar"
-
+import { useEffect, useState } from "react";
+import { AnimatedCircularProgressBar } from "../ui/animated-circular-progress-bar";
 
 interface AnimatedProgressBarProps {
   value?: number;
@@ -26,16 +25,27 @@ export function AnimatedProgressBar({
       const timer = setTimeout(() => {
         setValue(targetValue);
       }, 200);
+
       return () => clearTimeout(timer);
-    } else {
-      const handleIncrement = (prev: number) => {
-        if (prev >= 100) return 0;
-        return prev + 10;
-      };
-      setValue(handleIncrement);
-      const interval = setInterval(() => setValue(handleIncrement), 2000);
-      return () => clearInterval(interval);
     }
+
+    const handleIncrement = (prev: number) => {
+      if (prev >= 100) return 0;
+      return prev + 10;
+    };
+
+    const timer = setTimeout(() => {
+      setValue(handleIncrement);
+    }, 0);
+
+    const interval = setInterval(() => {
+      setValue(handleIncrement);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [targetValue]);
 
   return (
@@ -46,7 +56,12 @@ export function AnimatedProgressBar({
         gaugeSecondaryColor={gaugeSecondaryColor}
         className={className}
       />
-      {label && <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>}
+
+      {label && (
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          {label}
+        </span>
+      )}
     </div>
   );
 }

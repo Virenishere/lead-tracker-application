@@ -1,26 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { API_BASE_URL } from "../config/api";
+import { AuthContext } from "./auth-context";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+export const AuthProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
+  const [user, setUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
 
-interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
-  login: (user: User) => void;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const login = (userData: User) => {
+  const login = (userData: {
+    id: string;
+    name: string;
+    email: string;
+  }) => {
     setUser(userData);
   };
 
@@ -44,11 +41,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           method: "POST",
           credentials: "include",
         });
+
         const data = await res.json();
+
         if (res.ok && data.success) {
           setUser(data.data.user);
         }
-      } catch (err) {
+      } catch {
         console.warn("No active session found via refresh token.");
       } finally {
         setIsLoading(false);
@@ -70,12 +69,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/auth-hook";
 import { API_BASE_URL } from "../config/api";
-import { toast } from "./ui/toast";
+import { toast } from "./ui/toast-manager";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,8 +32,8 @@ export const Login = () => {
       login(data.data.user);
       toast.success("Welcome back!", `Signed in as ${data.data.user.email}`);
       navigate("/dashboard");
-    } catch (err: any) {
-      const msg = err.message || "Failed to login";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
       setError(msg);
       toast.error("Login Failed", msg);
     }

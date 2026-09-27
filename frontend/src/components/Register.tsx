@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/auth-hook";
 import { API_BASE_URL } from "../config/api";
-import { toast } from "./ui/toast";
+import { toast } from "./ui/toast-manager";
 
 export const Register = () => {
   const [name, setName] = useState("");
@@ -33,8 +33,8 @@ export const Register = () => {
       login(data.data.user);
       toast.success("Account Created", `Welcome to Lead Tracker, ${data.data.user.name || 'User'}!`);
       navigate("/dashboard");
-    } catch (err: any) {
-      const msg = err.message || "Failed to register";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to register";
       setError(msg);
       toast.error("Registration Failed", msg);
     }

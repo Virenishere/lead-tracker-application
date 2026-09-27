@@ -2,7 +2,7 @@ import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
 import svgLogo from "../../assets/logo.svg"
 import { AnimatedThemeToggler } from "../ui/animated-theme-toggler";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/auth-hook";
 import { RippleButton } from "../ui/ripple-button";
 
 export const Navbar = () => {
