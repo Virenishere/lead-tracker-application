@@ -16,6 +16,7 @@ const app = express();
 const allowedOrigins = [
     process.env.CORS_ORIGIN,
     "http://localhost:5173",
+    "https://lead-tracker-application-kappa.vercel.app/"
 ].filter(Boolean) as string[];
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET || process.env.JWT_REFRESH_SECRET || "lead_tracker_cookie_secret_key";
